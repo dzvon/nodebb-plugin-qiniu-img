@@ -1,0 +1,20 @@
+{
+    "name": "nodebb-plugin-qiniu-img",
+    "version": "0.1.0",
+    "description": "A nodebb Plugin that uploads images to qiniu",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "nodebb",
+        "plugin",
+        "qiniu"
+    ],
+    "author": "Persevere Von <wu543065657@163.com>",
+    "license": "MIT",
+    "dependencies": {
+        "request": "^2.48.0",
+        "winston": "~0.8.3"
+    }
+}

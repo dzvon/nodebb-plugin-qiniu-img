@@ -1,0 +1,18 @@
+{
+    "id": "nodebb-plugin-qiniu-img",
+    "name": "Qiniu Image Upload Plugin",
+    "description": "A nodebb plugin that uploads images to qiniu",
+    "library": "./index.js",
+    "staticDirs": {
+        "qiniu": "public"
+    },
+    "hooks": [
+        { "hook": "static:app.load", "method": "init"},
+
+        { "hook": "filter:admin.header.build", "method": "admin.menu"},
+        { "hook": "filter:uploadImage", "method": "upload", "priority": 6 }
+
+    ],
+    "templates": "./public/templates",
+    "settingsRoute": "/admin/plugins/qiniu-img"
+}
