@@ -27,15 +27,15 @@ var request = require('request'),
                 qiniuSecretKey: settings.qiniuSecretKey,
                 qiniuImgBucket: settings.qiniuImgBucket
             };
-            res.render('admin/plugins/qiniu-img', {settings: data, csrf: req.csrfToken});
+            res.render('admin/plugins/qiniu-img', {settings: data, csrf: req.csrfToken()});
         });
     }
 
     function save(req, res, next) {
         var data = {
-            qiniuAccessKey: settings.qiniuAccessKey || '',
-            qiniuSecretKey: settings.qiniuSecretKey || '',
-            qiniuImgBucket: settings.qiniuImgBucket || ''
+            qiniuAccessKey: req.body.qiniuAccessKey || '',
+            qiniuSecretKey: req.body.qiniuSecretKey || '',
+            qiniuImgBucket: req.body.qiniuImgBucket || ''
         };
 
         db.setObject('nodebb-plugin-qiniu-img', data, function (err) {
@@ -93,6 +93,7 @@ var request = require('request'),
             return callback(new Error('图片路径不可用'));
         }
 
+        var formDataImage;
         if (type === 'file') {
             formDataImage = fs.createReadStream(image.path);
             formDataImage.on('error', function (err) {
