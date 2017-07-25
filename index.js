@@ -1,11 +1,13 @@
 'use strict';
 
-var request = require('request'),
+const request = require('request'),
     winston = require('winston'),
     fs = require('fs'),
     nconf = require.main.require('nconf'),
     async = require.main.require('async'),
     db = module.parent.require('./database');
+
+const qiniu = require('qiniu');
 
 (function (qiniuImg) {
     var dbSettingsKey = 'nodebb-plugin-qiniu-img';
@@ -87,8 +89,6 @@ var request = require('request'),
         var callbackCalled = false;
         var type = image.url ? 'url' : 'file';
 
-        console.log(image);
-
         if (type === 'file' && !image.path) {
             return callback(new Error('图片路径不可用'));
         }
@@ -103,6 +103,40 @@ var request = require('request'),
             formDataImage = image.url;
         } else {
             return callback(new Error('未知类型'));
+        }
+
+        uploadToQiniu(settings, formDataImage, function (err, body) {
+            if (err) {
+                return done(err);
+            }
+
+            console.log(body);
+        });
+    }
+
+    function uploadToQiniu(settings, image, callback) {
+        var mac = new qiniu.auth.digest.Mac(settings.qiniuAccessKey, settings.qiniuSecretKey);
+        var options = {
+            scope: settings.qiniuImgBucket
+        };
+
+        var putPolicy = new qiniu.rs.PutPolicy(options);
+        var uploadToken = putPolicy.uploadToken(mac);
+        var config = new qiniu.conf.Config();
+        var formUploader = new qiniu.form_up.FormUploader(config);
+        var putExtra = new qiniu.form_up.PutExtra();
+
+        if (image instanceof ReadableStream) {
+            formUploader.putStream(uploadToken, null, image, putExtra, function (err, body, info) {
+                if (err) {
+                    callback(err);
+                }
+
+                if (info.statusCode == 200) {
+                    callback(null, body);
+                }
+                console.log(info);
+            });
         }
     }
 
