@@ -19,6 +19,10 @@
 				<label>Qiniu Img Bucket</label>
 				<input id="qiniuImgBucket" type="text" class="form-control" placeholder="Enter Qiniu Imgage Bucket" value="{settings.qiniuImgBucket}">
 			</div>
+			<div class="form-group">
+				<label>Qiniu CDN Domain</label>
+				<input id="qiniuCDNDomain" type="text" class="form-control" placeholder="Enter Qiniu Imgage Bucket" value="{settings.qiniuCDNDomain}">
+			</div>
 		</div>
 	</div>
 </form>
@@ -33,7 +37,8 @@
 			_csrf: $('#csrf_token').val(),
 			qiniuAccessKey: $('#qiniuAccessKey').val(),
 			qiniuSecretKey: $('#qiniuSecretKey').val(),
-			qiniuImgBucket: $('#qiniuImgBucket').val()
+			qiniuImgBucket: $('#qiniuImgBucket').val(),
+			qiniuCDNDomain: $('#qiniuCDNDomain').val()
 		};
 
 		$.post(config.relative_path + '/api/admin/plugins/qiniu-img/save', data, function(data) {

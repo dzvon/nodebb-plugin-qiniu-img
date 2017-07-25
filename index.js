@@ -27,7 +27,8 @@ const qiniu = require('qiniu');
             var data = {
                 qiniuAccessKey: settings.qiniuAccessKey,
                 qiniuSecretKey: settings.qiniuSecretKey,
-                qiniuImgBucket: settings.qiniuImgBucket
+                qiniuImgBucket: settings.qiniuImgBucket,
+                qiniuCDNDomain: settings.qiniuCDNDomain,
             };
             res.render('admin/plugins/qiniu-img', {settings: data, csrf: req.csrfToken()});
         });
@@ -37,7 +38,8 @@ const qiniu = require('qiniu');
         var data = {
             qiniuAccessKey: req.body.qiniuAccessKey || '',
             qiniuSecretKey: req.body.qiniuSecretKey || '',
-            qiniuImgBucket: req.body.qiniuImgBucket || ''
+            qiniuImgBucket: req.body.qiniuImgBucket || '',
+            qiniuCDNDomain: req.body.qiniuCDNDomain || '',
         };
 
         db.setObject('nodebb-plugin-qiniu-img', data, function (err) {
@@ -64,7 +66,7 @@ const qiniu = require('qiniu');
             function (_settings, next) {
                 settings = _settings || {};
 
-                if (!settings.qiniuAccessKey || !settings.qiniuSecretKey || !settings.qiniuImgBucket) {
+                if (!settings.qiniuAccessKey || !settings.qiniuSecretKey || !settings.qiniuImgBucket || !settings.qiniuCDNDomain) {
                     return next(new Error('不可用的参数配置'));
                 }
 
@@ -110,7 +112,10 @@ const qiniu = require('qiniu');
                 return done(err);
             }
 
-            console.log(body);
+            return callback(null, {
+                url: settings.qiniuCDNDomain + body.key,
+                name: body.key
+            })
         });
     }
 
@@ -126,7 +131,7 @@ const qiniu = require('qiniu');
         var formUploader = new qiniu.form_up.FormUploader(config);
         var putExtra = new qiniu.form_up.PutExtra();
 
-        if (image instanceof ReadableStream) {
+        if (! typeof image !== "undefined" ) {
             formUploader.putStream(uploadToken, null, image, putExtra, function (err, body, info) {
                 if (err) {
                     callback(err);
@@ -135,7 +140,6 @@ const qiniu = require('qiniu');
                 if (info.statusCode == 200) {
                     callback(null, body);
                 }
-                console.log(info);
             });
         }
     }
