@@ -86,7 +86,7 @@ const qiniu = require('qiniu');
             }
         }
 
-        var file = data.file;
+        var file = data.image || data.file;
 
         var callbackCalled = false;
         var type = file.url ? 'url' : 'file';
