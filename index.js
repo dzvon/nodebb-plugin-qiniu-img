@@ -53,7 +53,7 @@ const qiniu = require('qiniu');
 
     qiniuImg.upload = function (data, callback) {
         var settings,
-            file = data.file || data.file;
+            file = data.image || data.file;
 
         if (!file) {
             return callback(new Error('文件不可用'));
