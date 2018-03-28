@@ -53,10 +53,10 @@ const qiniu = require('qiniu');
 
     qiniuImg.upload = function (data, callback) {
         var settings,
-            image = data.image;
+            file = data.file || data.file;
 
-        if (!image) {
-            return callback(new Error('图片不可用'));
+        if (!file) {
+            return callback(new Error('文件不可用'));
         }
 
         async.waterfall([
@@ -86,23 +86,23 @@ const qiniu = require('qiniu');
             }
         }
 
-        var image = data.image;
+        var file = data.file;
 
         var callbackCalled = false;
-        var type = image.url ? 'url' : 'file';
+        var type = file.url ? 'url' : 'file';
 
-        if (type === 'file' && !image.path) {
-            return callback(new Error('图片路径不可用'));
+        if (type === 'file' && !file.path) {
+            return callback(new Error('文件路径不可用'));
         }
 
         var formDataImage;
         if (type === 'file') {
-            formDataImage = fs.createReadStream(image.path);
+            formDataImage = fs.createReadStream(file.path);
             formDataImage.on('error', function (err) {
                 done(err);
             });
         } else if (type === 'url') {
-            formDataImage = image.url;
+            formDataImage = file.url;
         } else {
             return callback(new Error('未知类型'));
         }
