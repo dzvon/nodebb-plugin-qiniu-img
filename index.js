@@ -132,7 +132,7 @@ const qiniu = require('qiniu');
         var putExtra = new qiniu.form_up.PutExtra();
 
         if (! typeof image !== "undefined" ) {
-            formUploader.putStream(uploadToken, null, image, putExtra, function (err, body, info) {
+            formUploader.putStream(uploadToken, image.path, image, putExtra, function (err, body, info) {
                 if (err) {
                     callback(err);
                 }
