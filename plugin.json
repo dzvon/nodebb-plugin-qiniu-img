@@ -1,6 +1,6 @@
 {
     "id": "nodebb-plugin-qiniu-img",
-    "name": "Qiniu Image Upload Plugin",
+    "name": "Qiniu Image And File Upload Plugin",
     "description": "A nodebb plugin that uploads images to qiniu",
     "library": "./index.js",
     "staticDirs": {

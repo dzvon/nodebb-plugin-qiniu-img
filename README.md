@@ -1,3 +1,5 @@
+nodebb 插件，上传图片和文件到七牛。
+
 ## Installation
 
     npm install nodebb-plugin-qiniu-img
