@@ -131,11 +131,13 @@ function uploadToQiniu(settings, image, callback) {
     var putPolicy = new qiniu.rs.PutPolicy(options);
     var uploadToken = putPolicy.uploadToken(mac);
     var config = new qiniu.conf.Config();
-    var formUploader = new qiniu.form_up.FormUploader(config);
-    var putExtra = new qiniu.form_up.PutExtra();
+    config.zone = qiniu.zone.Zone_z2;
+    config.useCdnDomain = true;
+    var resumeUploader = new qiniu.resume_up.ResumeUploader(config);
+    var putExtra = new qiniu.resume_up.PutExtra();
 
     if (! typeof image !== "undefined" ) {
-        formUploader.putStream(uploadToken, image.path, image, putExtra, function (err, body, info) {
+        resumeUploader.putFile(uploadToken, null, image.path, putExtra, function (err, body, info) {
             if (err) {
                 callback(err);
             }
