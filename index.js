@@ -5,13 +5,16 @@ const request = require('request'),
     fs = require('fs'),
     nconf = require.main.require('nconf'),
     async = require.main.require('async'),
-    db = module.parent.require('./database');
+    db = require.main.require('./src/database'),
+    sockets = require.main.require('./src/socket.io');
 
 const qiniu = require('qiniu');
 
 var qiniuImg = module.exports;
 
 var dbSettingsKey = 'nodebb-plugin-qiniu-img';
+
+var uid;
 
 qiniuImg.init = function (params, callback) {
     params.router.get('/admin/plugins/qiniu-img', params.middleware.applyCSRF, params.middleware.admin.buildHeader, renderAdmin);
@@ -57,6 +60,8 @@ function save(req, res, next) {
 qiniuImg.upload = function (data, callback) {
     var settings,
         file = data.image || data.file;
+
+    uid = data.uid;
 
     if (!file) {
         return callback(new Error('文件不可用'));
@@ -131,10 +136,17 @@ function uploadToQiniu(settings, image, callback) {
     var putPolicy = new qiniu.rs.PutPolicy(options);
     var uploadToken = putPolicy.uploadToken(mac);
     var config = new qiniu.conf.Config();
-    config.zone = qiniu.zone.Zone_z2;
-    config.useCdnDomain = true;
+    config.useCdnDomain = false;
+    config.useHttpsDomain = true;
     var resumeUploader = new qiniu.resume_up.ResumeUploader(config);
     var putExtra = new qiniu.resume_up.PutExtra();
+    putExtra.progressCallback = function (uploadBytes, totalBytes) {
+        var progress = (uploadBytes/totalBytes)*100
+        sockets.in('uid_' + uid).emit('event:alert', {
+            title: "已上传： "+parseInt(progress)+"%",
+            timeout: 500
+        });
+    }
 
     if (! typeof image !== "undefined" ) {
         resumeUploader.putFile(uploadToken, null, image.path, putExtra, function (err, body, info) {
