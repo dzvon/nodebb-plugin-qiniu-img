@@ -3,6 +3,7 @@
 const request = require('request'),
     winston = require('winston'),
     fs = require('fs'),
+    path = require('path'),
     nconf = require.main.require('nconf'),
     async = require.main.require('async'),
     db = require.main.require('./src/database'),
@@ -149,7 +150,7 @@ function uploadToQiniu(settings, image, callback) {
     }
 
     if (! typeof image !== "undefined" ) {
-        resumeUploader.putFile(uploadToken, null, image.path, putExtra, function (err, body, info) {
+        resumeUploader.putFile(uploadToken, path.basename(image.path), image.path, putExtra, function (err, body, info) {
             if (err) {
                 callback(err);
             }
