@@ -1,4 +1,4 @@
-nodebb 插件，上传图片和文件到七牛。
+nodebb 插件，上传图片和文件到七牛。（推荐使用[nodebb-plugin-composer-qiniu](https://github.com/persevereVon/nodebb-plugin-composer-qiniu)）
 
 ## Installation
 
