@@ -1,6 +1,6 @@
 {
     "name": "nodebb-plugin-qiniu-img",
-    "version": "1.3.4",
+    "version": "1.3.5",
     "description": "A nodebb Plugin that uploads images and files to qiniu",
     "main": "index.js",
     "scripts": {
